@@ -10,6 +10,7 @@ import type { Meal, Recipe, SearchResponse, CategoriesResponse } from "./meals.t
 // ---------------------------------------------------------------------------
 
 // TODO 1 — Normalise one Meal into our Recipe shape.
+
 //
 // Rules (and the compiler will hold you to the Recipe type):
 //   mealId      <- idMeal      keep it: you need it to avoid saving duplicates
@@ -27,22 +28,21 @@ import type { Meal, Recipe, SearchResponse, CategoriesResponse } from "./meals.t
 // Do NOT give this an `id`. `id` belongs to json-server and is assigned on POST,
 // which is exactly why Recipe has no id and SavedRecipe does.
 export function toRecipe(meal: Meal): Recipe {
-  // TODO: return our shape
-  export function toRecipe(meal: Meal): Recipe {
- const ingredients = Array.from(
- { length: 20 },
- (_, i) => meal[`strIngredient${i + 1}`]
- ).filter((x): x is string => Boolean(x && x.trim()));
- return {
- mealId: meal.idMeal,
- title: meal.strMeal,
- category: meal.strCategory,
- thumb: meal.strMealThumb,
- ingredients,
- time: 0,
- notes: "",
- favorite: false,
- }
+  const ingredients = Array.from(
+    { length: 20 },
+    (_, i) => meal[`strIngredient${i + 1}` as keyof Meal]
+  ).filter((x): x is string => Boolean(x && x.trim()));
+
+  return {
+    mealId: meal.idMeal,
+    title: meal.strMeal,
+    category: meal.strCategory,
+    thumb: meal.strMealThumb,
+    ingredients,
+    time: 0,
+    notes: "",
+    favorite: false,
+  };
 }
 
 // TODO 2 — Search the catalogue.
@@ -70,6 +70,8 @@ export async function searchMeals(query: string): Promise<Recipe[]> {
 }
 
 // TODO 3 — The real category list.
+
+
 //
 //   GET /categories.php  ->  { categories: [ { strCategory: "Beef" }, ... ] }
 //
@@ -77,7 +79,6 @@ export async function searchMeals(query: string): Promise<Recipe[]> {
 // categories and they are not your five. Return string[] so CategoryFilter can
 // keep rendering buttons without knowing where they came from.
 export async function getCategories(): Promise<string[]> {
-  // TODO: typed GET, normalise null -> [], return string[]
   const { data } = await mealdb.get<CategoriesResponse>("/categories.php");
   return (data.categories ?? []).map((c) => c.strCategory);
 }
