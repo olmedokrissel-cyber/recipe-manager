@@ -74,3 +74,9 @@ Good luck!
 ![alt text](image.png)
 
 ![alt text](image-1.png)
+
+# Live URL
+https://recipe-manager-one-orcin.vercel.app/
+
+# App Preview
+![Recipe Manager Screenshot] ![alt text](image-2.png)
