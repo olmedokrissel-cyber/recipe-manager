@@ -12,6 +12,8 @@ interface MealCardProps {
 export default function MealCard({ meal, onSave, isSaved, isSaving }: MealCardProps) {
   const { title, category, thumb, ingredients } = meal;
 
+   const label = isSaved ? "Saved" : isSaving ? "Saving..." : "Save";
+
   return (
     <div className="card bg-base-100 shadow">
       <figure className="h-40 overflow-hidden">
@@ -33,8 +35,15 @@ export default function MealCard({ meal, onSave, isSaved, isSaving }: MealCardPr
               - otherwise      -> enabled, label "Save", calls onSave(meal)
             Without the isSaved guard a student can save the same meal six
             times, and the rubric checks for exactly that. */}
+
         <div className="card-actions justify-end mt-2">
-          <button className="btn btn-sm btn-primary">Save</button>
+          <button
+              className={`btn btn-sm ${isSaved ? "btn-disabled" : "btn-primary"}`}
+              onClick={() => onSave(meal)}
+              disabled={isSaved || isSaving}
+        >
+          {label}
+          </button>
         </div>
       </div>
     </div>
