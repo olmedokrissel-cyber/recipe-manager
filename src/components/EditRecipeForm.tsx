@@ -16,6 +16,9 @@ export default function EditRecipeForm({
   isSaving,
 }: EditRecipeFormProps) {
   // TODO 10 — Controlled inputs, seeded from the recipe being edited.
+    const [time, setTime] = useState(String(recipe.time ?? 0));
+    
+    const [notes, setNotes] = useState(recipe.notes ?? "");
   //
   // Two pieces of state, each initialised from `recipe` (Week 11):
   //   time  -> recipe.time      (keep it a string in state; Number() on submit)
@@ -35,7 +38,20 @@ export default function EditRecipeForm({
   // SearchBar above shows the DOM-handle use (`useRef<HTMLInputElement>(null)`
   // plus `ref={...}`). This is the second use from the reviewer:
   //
-  //   const original = useRef({ time: recipe.time ?? 0, notes: recipe.notes ?? "" });
+     const original = useRef({ time: recipe.time ?? 0, notes: recipe.notes ?? "" });
+
+     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+      const nextTime = Number(time) || 0;
+      const nextNotes = notes.trim();
+          if (nextTime === original.current.time && nextNotes === original.current.notes) {
+    onCancel();
+      return;
+    }
+      onSave({ id: recipe.id, time: nextTime, notes: nextNotes });
+      };
+      
+
   //
   // It records what the recipe looked like when the modal opened. On submit,
   // if nothing actually changed, call onCancel() and skip the PATCH entirely —
