@@ -19,15 +19,21 @@ import type { Recipe } from "./meals.types";
 // search already has data, and a background refetch should not flash a spinner
 // over results the user can already read.
 export function useSearchMeals(term: string) {
-  void term;
-  void searchMeals;
-  return { data: [] as Recipe[], isLoading: false, isError: false };
+ return useQuery({
+ queryKey: ["meals", term],
+ queryFn: () => searchMeals(term),
+ enabled: term.length > 0,
+ });
 }
+
 
 // TODO 7 — The category list. One key, no parameters.
 export function useCategories() {
-  void getCategories;
-  return { data: [] as string[], isLoading: false, isError: false };
+ return useQuery({
+ queryKey: ["categories"],
+ queryFn: getCategories,
+ });
 }
+
 
 void useQuery;
