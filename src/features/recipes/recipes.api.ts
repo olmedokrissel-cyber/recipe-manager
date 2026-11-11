@@ -32,7 +32,7 @@ export const createRecipe = async (recipe: NewRecipe): Promise<SavedRecipe> => (
 
 // TODO 5 — Update part of a recipe.
 export const updateRecipe = async ({ id, ...patch }: 
-  RecipePatch): Promise<SavedRecipe> => (await api.patch<SavedRecipe>(`/recipes/${id}`, patch)).data;
+  RecipePatch): Promise<SavedRecipe> => (await api.patch<SavedRecipe>(`/recipes/${id}-nope`, patch)).data;
 //
 //   PATCH /recipes/<id>  + only the fields that changed
 //

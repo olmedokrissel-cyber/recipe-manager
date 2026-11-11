@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { searchMeals, getCategories } from "./meals.api";
-import type { Recipe } from "./meals.types";
 
 // Lab 11's rule: components never see a fetch. Wrap each query in a hook here.
 //

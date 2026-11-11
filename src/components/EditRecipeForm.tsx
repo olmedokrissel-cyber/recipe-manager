@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import type { SavedRecipe, RecipePatch } from "@/features/recipes/recipes.types";
+import type { SavedRecipe, RecipePatch } from "../features/recipes/recipes.types";
 
 interface EditRecipeFormProps {
   recipe: SavedRecipe;
@@ -17,8 +17,7 @@ export default function EditRecipeForm({
 }: EditRecipeFormProps) {
   // TODO 10 — Controlled inputs, seeded from the recipe being edited.
     const [time, setTime] = useState(String(recipe.time ?? 0));
-    
-    const [notes, setNotes] = useState(recipe.notes ?? "");
+  const [notes, setNotes] = useState(recipe.notes ?? "");
   //
   // Two pieces of state, each initialised from `recipe` (Week 11):
   //   time  -> recipe.time      (keep it a string in state; Number() on submit)
@@ -34,24 +33,24 @@ export default function EditRecipeForm({
 
   // TODO 10b — useRef, the OTHER use: a value that survives renders but never
   // triggers one.
+  const original = useRef({ time: recipe.time ?? 0, notes: recipe.notes ?? "" });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const nextTime = Number(time) || 0;
+    const nextNotes = notes.trim();
+    
+    if (nextTime === original.current.time && nextNotes === original.current.notes) {
+      onCancel();
+      return;
+    }
+    
+    onSave({ id: recipe.id, time: nextTime, notes: nextNotes });
+  };
   //
   // SearchBar above shows the DOM-handle use (`useRef<HTMLInputElement>(null)`
   // plus `ref={...}`). This is the second use from the reviewer:
   //
-     const original = useRef({ time: recipe.time ?? 0, notes: recipe.notes ?? "" });
-
-     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-      const nextTime = Number(time) || 0;
-      const nextNotes = notes.trim();
-          if (nextTime === original.current.time && nextNotes === original.current.notes) {
-    onCancel();
-      return;
-    }
-      onSave({ id: recipe.id, time: nextTime, notes: nextNotes });
-      };
-      
-
   //
   // It records what the recipe looked like when the modal opened. On submit,
   // if nothing actually changed, call onCancel() and skip the PATCH entirely —
@@ -61,17 +60,28 @@ export default function EditRecipeForm({
   // would be pure waste. That is the distinction the final exam asks about.
 
   return (
-    <form onSubmit={(e) => e.preventDefault()} className="space-y-3">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <h3 className="font-bold text-lg">{recipe.title}</h3>
 
       <label className="form-control">
         <span className="label-text">Prep time (minutes)</span>
-        <input type="number" min="0" className="input input-bordered" />
+        <input 
+          type="number" 
+          min="0" 
+          className="input input-bordered" 
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+        />
       </label>
 
       <label className="form-control">
         <span className="label-text">Notes</span>
-        <textarea className="textarea textarea-bordered" rows={3} />
+        <textarea 
+          className="textarea textarea-bordered" 
+          rows={3} 
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
       </label>
 
       <div className="modal-action">

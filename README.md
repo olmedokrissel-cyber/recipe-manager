@@ -72,3 +72,5 @@ Refer to the **Requirements Checklist** in the assessment handout. Every box mus
 
 Good luck!
 ![alt text](image.png)
+
+![alt text](image-1.png)
