@@ -36,6 +36,26 @@ export function useSavedRecipes() {
 });
 
   // TODO 12 — The favourite toggle, OPTIMISTICALLY.
+  // TODO 12 — The favourite toggle, OPTIMISTICALLY.
+  const favorite = useMutation({
+    mutationFn: updateRecipe,
+    onMutate: async ({ id, favorite }) => {
+      await queryClient.cancelQueries({ queryKey: KEY });
+      const previous = queryClient.getQueryData<SavedRecipe[]>(KEY);
+      
+      queryClient.setQueryData<SavedRecipe[]>(KEY, (old = []) =>
+        old.map((r) =>
+          r.id === id ? { ...r, favorite: Boolean(favorite) } : r
+        )
+      );
+      
+      return { previous };
+    },
+    onError: (_e, _v, context) => {
+      queryClient.setQueryData(KEY, context?.previous);
+    },
+    onSettled: invalidate,
+  });
   //
   // This is the one mutation that must NOT wait for the server. A star that
   // takes 800ms to fill feels broken, so we update the cache first and roll
@@ -61,7 +81,6 @@ export function useSavedRecipes() {
   // To prove the rollback works, see "How to prove your rollback works" in the
   // handout. Do NOT just stop json-server — the list unmounts and you will see
   // nothing.
-  const favorite = useMutation({ mutationFn: updateRecipe, onSettled: invalidate });
 
   const saved = query.data ?? [];
 
@@ -74,10 +93,10 @@ export function useSavedRecipes() {
     update,
     remove,
     // TODO 12b — compute the NEW value here. Do not hand `favorite.mutate`
+    toggleFavorite: (recipe: SavedRecipe) =>
+      favorite.mutate({ id: recipe.id, favorite: !recipe.favorite }),
     // straight to RecipeCard: it passes the whole recipe, so the PATCH body
     // would carry every field AND `favorite` would still hold its old value,
     // so the star would never toggle.
-    toggleFavorite: (recipe: SavedRecipe) =>
-      favorite.mutate({ id: recipe.id, favorite: !recipe.favorite }),
   };
 }
