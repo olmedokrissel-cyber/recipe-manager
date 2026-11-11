@@ -71,3 +71,4 @@ Refer to the **Requirements Checklist** in the assessment handout. Every box mus
 4. Submit the repo URL through the class submission channel.
 
 Good luck!
+![alt text](image.png)
